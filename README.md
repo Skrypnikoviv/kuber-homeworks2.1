@@ -63,49 +63,40 @@ kubectl logs -f shared-volume-deployment-55b4b6df5-dxhfb -c multitool
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: node-log-reader
+  name: test-daemonset
+  namespace: volume1
   labels:
-    app: node-log-reader
+    app: multitool
 spec:
   selector:
     matchLabels:
-      app: node-log-reader
+      name: test-daemonset
   template:
     metadata:
       labels:
-        app: node-log-reader
+        name: test-daemonset
     spec:
       containers:
       - name: multitool
-        image: wbitt/network-multitool:latest
-        command: ["/bin/sh", "-c"]
-        args: ["tail -f /host/var/log/syslog"]
+        image: wbitt/network-multitool
+        command: ["/bin/sh", "-c", "tail -f /nodes-logs/syslog"]  # Автоматический просмотр логов
         volumeMounts:
-        - name: host-log
-          mountPath: /host/var/log
+        - name: host-logs
+          mountPath: /nodes-logs
           readOnly: true
       volumes:
-      - name: host-log
+      - name: host-logs
         hostPath:
           path: /var/log
-          type: File
+          type: Directory
 ```
 
 ### Демонстрация работы
 1. Применяем манифест:
 ```bash
-kubectl apply -f node-log-reader-daemonset.yaml
+kubectl apply -f daemonset.yaml
 ```
 
 2. Проверяем логи пода:
-```bash
-kubectl logs -f node-log-reader-<pod-id>
-```
+![image](https://github.com/user-attachments/assets/d20c366d-6f44-4c03-8979-e1657668f247)
 
-Пример вывода (фрагмент логов ноды):
-```
-Mar 22 10:20:01 microk8s-node01 systemd[1]: Starting Regular background program processing daemon...
-Mar 22 10:20:01 microk8s-node01 cron[1234]: (CRON) INFO (pidfile fd = 3)
-Mar 22 10:20:01 microk8s-node01 cron[1234]: (CRON) INFO (Running @reboot jobs)
-...
-```
