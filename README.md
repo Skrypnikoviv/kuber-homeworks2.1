@@ -43,21 +43,18 @@ spec:
 ### Демонстрация работы
 1. Применяем манифест:
 ```bash
-kubectl apply -f shared-volume-deployment.yaml
+kubectl apply -f deployment.yaml
 ```
 
 2. Проверяем логи контейнера multitool:
 ```bash
-kubectl logs -f shared-volume-deployment-<pod-id> -c multitool
+kubectl logs -f shared-volume-deployment-55b4b6df5-dxhfb -c multitool
 ```
 
 Пример вывода:
-```
-Wed Mar 22 10:15:00 UTC 2023
-Wed Mar 22 10:15:05 UTC 2023
-Wed Mar 22 10:15:10 UTC 2023
-...
-```
+
+![image](https://github.com/user-attachments/assets/468f841e-fd67-4d7b-90c1-fc37cf31b399)
+
 
 ## Задание 2: Чтение логов ноды через DaemonSet
 
